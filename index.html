@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Enter Nickname and Game ID</title>
+	<style>
+    	body {
+        	background-image: url('https://img.freepik.com/free-vector/hand-painted-watercolor-pastel-sky-background_23-2148902771.jpg');
+        	background-size: cover;
+        	background-repeat: no-repeat;
+        	background-attachment: fixed; /* Fixed background */
+        	background-position: center; /* Center the background */
+    	}
+    	.container {
+        	text-align: center;
+        	padding: 20px;
+        	background-color: #4A90E2;
+        	color: #FFFFFF;
+        	border-radius: 10px;
+        	box-shadow: 0px 0px 10px #000;
+    	}
+    	h1 {
+        	font-size: 36px;
+        	margin-bottom: 10px;
+    	}
+    	.image-container {
+        	display: flex;
+        	justify-content: center;
+        	align-items: center;
+        	max-width: 50%; /* Adjust the max width as needed */
+        	margin: 0 auto;
+    	}
+    	img {
+        	max-width: 100%;
+        	height: auto;
+    	}
+	</style>
+</head>
+<body>
+	<div class="container">
+    	<h1>Jump</h1>
+    	<form action="/submit" method="post">
+        	<label for="nickname">Nick-name:</label>
+        	<input type="text" id="nickname" name="nick-name" required><br><br>
+        	<label for="gameid">Game ID:</label>
+        	<input type="text" id="gameid" name="game-id" required><br><br>
+        	<input type="submit" value="Submit">
+    	</form>
+	</div>
+	<div class="image-container">
+    	<img src="https://www.icegif.com/wp-content/uploads/running-icegif.gif" alt="Jump Image">
+	</div>
+</body>
+</html>
+
