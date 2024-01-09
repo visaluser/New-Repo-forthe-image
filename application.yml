@@ -61,7 +61,7 @@ spec:
     spec:
       containers:
         - name: stateful-container
-          image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com/visalrepository:${{ steps.docker_build.outputs.commit_id }}
+          image: visalmk/docker-image:latest
           ports:
             - containerPort: 4000
           volumeMounts:
