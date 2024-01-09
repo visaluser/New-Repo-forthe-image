@@ -1,58 +1,75 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: PersistentVolume
 metadata:
-  name: deployment
+  name: stateful-pv
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: my-app
-  template:
-    metadata:
-      labels:
-        app: my-app
-    spec:
-      containers:
-      - name: my-app
-        image: visalmk/docker-image:latest
-        ports:
-        - containerPort: 4000
----
-#apiVersion: v1
-#kind: Service
-#metadata:
- # name: my-app-service
-#spec:
- # selector:
-  #  app: my-appapiVersion: v1
-#kind: Service
-#metadata:
- # name: my-app-service
-#spec:
- # selector:
- #   app: my-app
- # ports:
-   # - protocol: TCP
-    #  port: 31427
-    #  targetPort: 4000
- # type: LoadBalancer
+  storageClassName: manual
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/tmp/data"
 
-  #ports:
-   # - protocol: TCP
-    #  port: 31427
-     # targetPort: 4000
-      #nodePort: 31427
-  #type: NodePort
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: stateful-pvc
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-app-service
+  name: headless-stateful-svc
+  labels:
+    app: headless-stateful
 spec:
-  selector:
-    app: my-app
   ports:
-    - protocol: TCP
-      port: 80  # Use the default port for HTTP
-      targetPort: 4000
-  type: ClusterIP
+  - port: 4000
+    targetPort: 4000
+  selector:
+    app: stateful
+  type: NodePort
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefulapp
+spec:
+  serviceName: headless-stateful-svc
+  replicas: 3
+  selector:
+    matchLabels:
+      app: stateful
+  template:
+    metadata:
+      labels:
+        app: stateful
+    spec:
+      containers:
+        - name: stateful-container
+          image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com/visalrepository:${{ steps.docker_build.outputs.commit_id }}
+          ports:
+            - containerPort: 4000
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          securityContext:
+            runAsUser: 0
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: stateful-pvc
