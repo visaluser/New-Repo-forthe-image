@@ -44,5 +44,5 @@ jobs:
       - name: Deploy to EKS
         run: |
           kubectl delete -f application.yml
-          kubectl apply -f mysql.yaml
+          kubectl delete -f mysql.yaml
          # kubectl delete -f ingress.yaml
